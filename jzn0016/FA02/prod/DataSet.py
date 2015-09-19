@@ -60,7 +60,45 @@ class DataSet(object):
             raise ValueError
         
         return result
+    
+    def RHP(self, t=None, n=None, f=None):
+        if(t == None):
+            raise ValueError
+        if(not(isinstance(t, float))):
+            raise ValueError
+        if(t < 0.0):
+            raise ValueError
         
+        if(n == None):
+            raise ValueError
+        if(not(isinstance(n, int))):
+            raise ValueError
+        if(n < 3):
+            raise ValueError
+        
+        if(f == None):
+            raise ValueError
+        
+        epsilon = 0.001
+        simpsonOld = 0
+        simpsonNew = epsilon
+        s = 4
+        while (abs((simpsonNew - simpsonOld ) / simpsonNew) > epsilon):
+            simpsonOld = simpsonNew
+            w=t/s
+            interCal = 0
+            for x in range(0, s+1):
+                if x == 0:
+                    interCal = interCal + f(0, n)
+                elif x == s:
+                    interCal = interCal + f(t, n)
+                elif (x % 2 == 0):
+                    interCal = interCal + 2*f((x+1) * w, n)
+                elif (x % 2 == 1):
+                    interCal = interCal + 4*f((x+1) * w, n)
+            simpsonNew = interCal * (w/3)
+            s = s*2
+        return simpsonNew
         
     
         

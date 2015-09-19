@@ -128,26 +128,35 @@ class TCurveTest(unittest.TestCase):
     def test500_010ShouldCalculateNominalCaseOneTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(1.8946, 7, 1), .95, 4)
-        
+         
     def test500_020ShouldCalculateNominalCaseTwoTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(1.8946, 7, 2), .90, 4)
-
+ 
     def test500_030ShouldEdgeLowTLowNOneTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(0.2767, 3, 1), 0.6, 4)        
-
+ 
     def test500_040ShouldEdgeLowTHighNOneTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(0.2567, 20, 1), 0.6, 4)    
-
+ 
     def test500_050ShouldEdgeHighTLowNOneTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(5.8409, 3, 1), .995, 4)
-        
+         
     def test500_060ShouldEdgeHighTHighNOneTail(self):
         myT = DataSet.DataSet()
         self.assertAlmostEquals(myT.p(2.8453, 20, 1), .995, 4)
+        
+    def test500_070ShouldCalculateNominalCaseOneTail(self):
+        myT = DataSet.DataSet()
+        self.assertAlmostEquals(myT.p(2.75, 30, 1), .995, 2)
+        
+    def test500_080ShouldCalculateNominalCaseTwoTail(self):
+        myT = DataSet.DataSet()
+        self.assertAlmostEquals(myT.p(0.2887, 3, 2), .20, 1)
+         
         
 # Sad path
     def test500_910ShouldRaiseExceptionOnMissingT(self):
@@ -193,5 +202,63 @@ class TCurveTest(unittest.TestCase):
  
  
 # 600 RHP            
-#------------- your tests go here --------------            
+#------------- your tests go here --------------  
+#happy path tests
+    def test600_010ShouldCalculateSimpleIntegral0toT(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        self.assertAlmostEquals(myT.RHP(t=1.0, n=7, f=f), .50, 2)
+    
+    
+    def test600_020ShouldCalculateSimpleIntegral0toT(self):
+        myT = DataSet.DataSet()
+        def f(t,n): return t**2
+        self.assertAlmostEquals(myT.RHP(t=1.0, n=7, f=f), .333333, 3)
+        
+    def test600_030ShouldCalculateComplexIntegral0toT(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return 1/(1 + t**2)
+        self.assertAlmostEquals(myT.RHP(t=7.0, n=7, f=f), 1.4, 1)
+    
+    def test600_040ShouldCalculateComplexIntegral0toT(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t + t**2 -4
+        self.assertAlmostEquals(myT.RHP(t=7.0, n=7, f=f), 110.9, 1)
+#sad path tests  
+    def test600_910ShouldRaiseExceptionOnOutOfRangeN(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        with self.assertRaises(ValueError) as context:
+            myT.RHP(t=1.0, n=2, f=f)
+    
+    def test600_920ShouldRaiseExceptionOnOutOfRangeT(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        with self.assertRaises(ValueError) as context:
+            myT.RHP(-1.0, 4, f)
 
+    def test600_930ShouldRaiseExceptionInvalidInputT(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        with self.assertRaises(ValueError) as context:
+            myT.RHP(1, 4, f)
+
+    def test600_940ShouldRaiseExceptionInvalidInputN(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        with self.assertRaises(ValueError) as context:
+            myT.RHP(1.0, 4.0, f)
+            
+    def test600_950ShouldRaiseExceptionInvalidInputTNone(self):
+        myT = DataSet.DataSet()
+        def f(t, n):
+            return t
+        with self.assertRaises(ValueError) as context:
+            myT.RHP(1, 2, f)
